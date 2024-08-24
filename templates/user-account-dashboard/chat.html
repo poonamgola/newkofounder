@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -179,11 +180,12 @@
                     <div class="card mb-sm-3 mb-md-0 contacts_card">
 					<div class="card-header">
 						<div class="input-group">
-							<input type="text" placeholder="Search..." name="" class="form-control search">
-							<div class="input-group-prepend">
-								<span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
-							</div>
-						</div>
+                            <input type="text" id="chat-search-input" placeholder="Search..." name="" class="form-control search">
+                            <div class="input-group-prepend">
+                                <span id="chat-search-btn" class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                        
 					</div>
 					<div class="card-body contacts_body">
                         <!-- Existing chat threads section -->
@@ -318,6 +320,28 @@
 		</div>
 
         <script src="{% static 'theme-assets/js/chat.js' %}"></script>
+        <script>
+            document.getElementById('chat-search-btn').addEventListener('click', function() {
+                let searchTerm = document.getElementById('chat-search-input').value.toLowerCase();
+                let chatContacts = document.querySelectorAll('.contacts li');
+    
+                chatContacts.forEach(function(contact) {
+                    let contactName = contact.querySelector('.user_info span').textContent.toLowerCase();
+                    
+                    if (contactName.includes(searchTerm)) {
+                        contact.style.display = '';  // Show contact
+                    } else {
+                        contact.style.display = 'none';  // Hide contact
+                    }
+                });
+            });
+    
+            document.getElementById('chat-search-input').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    document.getElementById('chat-search-btn').click();
+                }
+            });
+        </script>
 
 	</body>
 </html>
