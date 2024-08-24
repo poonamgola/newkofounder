@@ -1,0 +1,98 @@
+{% extends "user-account-dashboard/base.html" %}
+{% load static %}
+{% block UserMainContent %}
+<div class="col-lg-8 col-xl-9 ps-lg-4 ps-xl-6">
+    <div class="d-flex justify-content-between align-items-center mb-5 mb-sm-6">
+        <h1 class="h3 mb-0">Messages</h1>
+        <button class="btn btn-primary d-lg-none flex-shrink-0 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+            <i class="fas fa-sliders-h"></i> Menu
+        </button>
+    </div>
+
+    <div class="row g-3 align-items-center mb-5">
+        <div class="col-xl-5">
+            <form class="rounded position-relative" method="GET" action="{% url 'search_profiles' %}">
+                <input class="form-control pe-5" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ query|default:'' }}">
+                <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6"></i></button>
+            </form>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <a href="{% url "chat" %}" class="btn btn-primary mb-0"><i class="bi bi-plus-lg me-2"></i>Chat</a>
+        </div>
+    </div>
+
+    <div class="mt-3 border bg-white border-light shadow-sm py-1 rounded">
+        {% if results %}
+            {% for user in results %}
+            <a href="{% url 'chat' receiver_id=user.id %}" class="text-decoration-none text-reset item-link">
+                <div class="d-md-flex align-items-center rounded mb-2 p-2">
+                    <div class="avatar avatar-lg position-relative mb-2 me-3">
+                        <img class="avatar-img rounded-circle border border-2 border-white" src="{{ user.profile_image.url }}" alt="Avatar">
+                    </div>
+                    <div class="mb-3 mb-md-0">
+                        <h6>{{ user.full_name }}</h6>
+                        <p>{{ user.company }}</p>
+                    </div>
+                    <div class="ms-auto d-md-flex align-items-center">
+                        <span class="btn btn-sm btn-link text-primary-hover mb-0">
+                            <i class="bi bi-three-dots fa-fw fs-5"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <a href="#" class="text-decoration-none text-reset item-link">
+                <div class="d-md-flex align-items-center rounded mb-2 p-2">
+                    <div class="avatar avatar-lg position-relative mb-2 me-3">
+                        <img class="avatar-img rounded-circle border border-2 border-white" src="{% static 'theme-assets/images/avatar/05.jpg' %}" alt="Avatar">
+                    </div>
+                    <div class="mb-3 mb-md-0">
+                        <h6>Abhishek Dubey</h6>
+                        <p>Connect with LinkedIn account for a personalized experience...</p>
+                    </div>
+                    <div class="ms-auto d-md-flex align-items-center">
+                        <p class="mb-0">11:10PM</p>
+                        <span class="btn btn-sm btn-link text-primary-hover mb-0">
+                            <i class="bi bi-three-dots fa-fw fs-5"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% comment %} <script>
+    const roomName = "{{ room_name }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.message + '\n');
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
+</script> {% endcomment %}
+{% endblock UserMainContent %}

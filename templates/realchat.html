@@ -1,0 +1,179 @@
+{% extends "user-account-dashboard/base.html" %}
+{% load static %}
+
+{% block UserMainContent %}
+<div class="col-lg-8 col-xl-9 ps-lg-4 ps-xl-6">
+    <main class="main is-visible" data-dropzone-area="">
+        <div class="container h-100">
+            <div class="d-flex flex-column h-100 position-relative">
+                <!-- Chat: Header -->
+                <div class="chat-header border-bottom">
+                    <div class="row align-items-center">
+                        <!-- Mobile: close -->
+                        <div class="col-2 d-xl-none">
+                            <a class="icon icon-lg text-muted" href="{% url 'messages' %}" data-toggle-chat="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+                        <!-- Mobile: close -->
+
+                        <!-- Content -->
+                        {% if user.is_authenticated %}
+                        <h5 style="text-align: end; padding-right: 10px">Logged in as : {{ user.username }}</h5>
+                        <input type="hidden" id="logged-in-user" value="{{ user.id }}">
+                        {% endif %}
+                        <div class="col-12">
+                            <div class="row align-items-center text-center text-xl-start">
+                                <!-- Title -->
+                                <div class="col-12">
+                                    <div class="row align-items-center gx-5">
+                                        <!-- User Info -->
+                                        <div class="col-auto">
+
+                                        <!-- User Info -->
+                                    </div>
+                                </div>
+                                <!-- Title -->
+                            </div>
+                        </div>
+                        <!-- Content -->
+                    </div>
+                </div>
+                <!-- Chat: Header -->
+
+                <!-- Chat: Content -->
+                <div class="chat-body hide-scrollbar flex-1 h-100" id="chat-body">
+                    <div class="chat-body-inner" style="padding-bottom: 87px">
+                        <!-- Messages will be dynamically loaded here -->
+                    </div>
+                </div>
+                <!-- Chat: Content -->
+
+                <!-- Chat: Footer -->
+                <div class="chat-footer pb-3 pb-lg-7 position-sticky bottom-0 start-0">
+                    <!-- Chat: Form -->
+                    <form id="chat-form" class="chat-form rounded-pill bg-dark" data-emoji-form="">
+                        <div class="row align-items-center gx-0">
+                            <div class="col-auto">
+                                <a href="#" class="btn btn-icon btn-link text-body rounded-circle dz-clickable" id="dz-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip">
+                                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div class="col">
+                                <div class="input-group">
+                                    <textarea class="form-control" id="chat-message-input" placeholder="Type your message..." rows="1" data-emoji-input="" data-autosize="true" style="overflow: hidden;overflow-wrap: break-word;resize: none;background: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;border: none;"></textarea>
+
+                                    <a href="#" style="display:flex; justify-content: center; align-items: center;" data-emoji-btn="">
+                                        <span class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-auto">
+                                <button class="btn btn-icon btn-primary rounded-circle ms-5" id="chat-message-submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- Chat: Form -->
+                </div>
+                <!-- Chat: Footer -->
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Hidden user list for chat selection -->
+ 
+{% endblock UserMainContent %}
+
+{% block javascript %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const userList = document.getElementById('user-list');
+    const chatTitle = document.getElementById('chat-title');
+    const chatEmail = document.getElementById('chat-email');
+    const chatBody = document.getElementById('chat-body');
+    const chatAvatar = document.getElementById('chat-avatar');
+    const chatForm = document.getElementById('chat-form');
+    const chatMessageInput = document.getElementById('chat-message-input');
+    const chatMessageSubmit = document.getElementById('chat-message-submit');
+
+    let ws = null;
+
+    function initializeChat(userId, userName, userEmail, userAvatar) {
+        if (ws) {
+            ws.close();
+        }
+        ws = new WebSocket(`ws://${window.location.host}/ws/chat/${userId}/`);
+
+        ws.addEventListener('open', function(event) {
+            console.log('WebSocket connection opened:', event);
+        });
+
+        ws.addEventListener('message', function(event) {
+            const data = JSON.parse(event.data);
+            const message = data.message;
+            const user = data.user;
+
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.textContent = `${user}: ${message}`;
+            chatBody.querySelector('.chat-body-inner').appendChild(messageElement);
+        });
+
+        ws.addEventListener('error', function(event) {
+            console.error('WebSocket error:', event);
+        });
+
+        ws.addEventListener('close', function(event) {
+            console.log('Chat socket closed unexpectedly');
+        });
+
+        chatTitle.textContent = userName;
+        chatEmail.textContent = userEmail;
+        chatAvatar.querySelector('img').src = userAvatar;
+
+        chatMessageSubmit.addEventListener('click', function(event) {
+            event.preventDefault();
+            const message = chatMessageInput.value;
+            if (message) {
+                ws.send(JSON.stringify({
+                    'message': message,
+                }));
+                chatMessageInput.value = '';
+            }
+        });
+    }
+
+    document.querySelectorAll('.user-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const userName = this.getAttribute('data-user-name');
+            const userEmail = this.getAttribute('data-user-email');
+            const userAvatar = this.getAttribute('data-user-avatar');
+
+            initializeChat(userId, userName, userEmail, userAvatar);
+        });
+    });
+});
+
+
+</script>
+{% endblock %}

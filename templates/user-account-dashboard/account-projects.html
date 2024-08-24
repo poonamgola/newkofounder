@@ -1,0 +1,323 @@
+{% extends "user-account-dashboard/base.html" %}
+{% load static %}
+{% block UserMainContent %}
+<!--edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Project</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <select class="form-select" name="category" required>
+                            <option selected="selected" disabled>Role</option>
+                            {% for community in communities %}
+                                <option value="{{ community.id }}">{{ community.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <select id="edit-sector" class="form-select form-select-lg" aria-label="Sector" name="sector" onchange="populateSubsectors('edit')" required>
+                            <option selected="selected" disabled>Sector</option>
+                        </select>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <select id="edit-subsector" class="form-select form-select-lg" name="sub_sector" aria-label="Subsector" required>
+                            <option selected="selected" disabled>Sub Sector</option>
+                        </select>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <input type="text" id="title" name="title" class="form-control" placeholder="Title" required>
+                        <label for="title">Title</label>
+                    </div>
+                    <div class="d-flex flex-column mb-4 input-floating-label">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" style="padding: 10px; border-radius: 5px;" name="description" id="description" rows="5" cols="30" placeholder="Description" required></textarea>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label heading-color">Upload PDF</label>
+                        <input type="file" class="form-control form-control-lg" name="pdf" required>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Project</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'account_projects' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <select class="form-select" name="category" required>
+                            <option selected="selected" disabled>Role</option>
+                            {% for community in communities %}
+                                <option value="{{ community.id }}">{{ community.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <select id="sector" class="form-select form-select-lg" aria-label="Sector" name="sector" onchange="populateSubsectors('add')" required>
+                            <option selected="selected" disabled>Sector</option>
+                        </select>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <select id="subsector" class="form-select form-select-lg" name="sub_sector" aria-label="Subsector" required>
+                            <option selected="selected" disabled>Sub Sector</option>
+                        </select>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <input type="text" id="title" name="title" class="form-control" placeholder="Title" required>
+                        <label for="title">Title</label>
+                    </div>
+                    <div class="d-flex flex-column mb-4 input-floating-label">
+                        <label class="ml-2" for="description">Description</label>
+                        <textarea class="form-control" style="padding: 10px; border-radius: 5px;" name="description" id="description" rows="5" cols="30" required></textarea>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label heading-color">Upload PDF</label>
+                        <input type="file" class="form-control form-control-lg" name="pdf" id="pdf" required>
+                    </div>
+                    <div class="input-floating-label form-floating mb-4">
+                        <button type="submit" value="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="col-lg-8 col-xl-9 ps-lg-4 ps-xl-6">
+    <!-- Title and offcanvas button -->
+    <div class="d-flex justify-content-between align-items-center mb-5 mb-sm-6">
+        <!-- Title -->
+        <h1 class="h3 mb-0">My projects</h1>
+        <!-- Advanced filter responsive toggler START -->
+        <button class="btn btn-primary d-lg-none flex-shrink-0 ms-2" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
+            aria-controls="offcanvasSidebar">
+            <i class="fas fa-sliders-h"></i> Menu
+        </button>
+        <!-- Advanced filter responsive toggler END -->
+    </div>
+
+    <!-- Search and buttons -->
+    <div class="row g-3 align-items-center mb-5">
+        <!-- Search -->
+        <div class="col-xl-5">
+            <form class="rounded position-relative">
+                <input class="form-control pe-5" type="search" placeholder="Search"
+                    aria-label="Search">
+                <button
+                    class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y"
+                    type="submit"><i class="fas fa-search fs-6"></i></button>
+            </form>
+        </div>
+        <!-- Button -->
+        <div class="col-sm-6 col-xl-3">
+            <!-- Button trigger modal -->
+            <a href="#" class="btn btn-primary mb-0" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-plus-lg me-2"></i>Add new
+                project</a>
+        </div>
+    </div>
+
+    <!-- my_template.html -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success d-flex align-items-center container" id="message_alert" role="alert">
+                <i class="fa-solid fa-circle-check fa-lg m-2"></i>
+                <div class="message">
+                    {{ message }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Table -->
+    <div class="table-responsive border-0">
+        <table class="table align-middle p-4 mb-0 table-hover">
+            <!-- Table head -->
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="border-0 text-white ">Title</th>
+                    <th scope="col" class="border-0 text-white ">Sector</th>
+                    <th scope="col" class="border-0 text-white rounded-end">Sub_Sector</th>
+                </tr>
+            </thead>
+            <!-- Table body START -->
+            <tbody>
+                {% for project in projects %}
+                <!-- Table row -->
+                <tr data-href="{% url 'community_single' project.slug %}">
+                    <!-- Table data -->
+                    <td>
+                        {% if project.title|length > 25 %}
+                        {{ project.title|slice:":25" }}......... 
+                    {% else %}
+                        {{ project.title }}
+                    {% endif %}
+                    </td>
+                    <!-- Table data -->
+                    <td>{{project.sector}}</td>
+                    <!-- Table data -->
+                    <td>{{project.sub_sector}}</td>
+                    <td>
+                        <a href="{% url 'accountProject_update' project.id %}" class="btn btn-sm btn-dark me-1 mb-1 mb-md-0 edit-btn" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ project.id }}"><i
+                                class="bi bi-pencil-square"></i></a>
+                        <a href="{% url 'account-projects_delete' project.id %}" class="btn btn-sm btn-danger me-1 mb-1 mb-md-0"><i
+                                class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <!-- Table body END -->
+        </table>
+    </div>
+</div>
+{% endblock UserMainContent %}
+
+{% block javascript %}
+<script>
+    var sectors = [
+        { name: 'Technology', subsectors: ['Web Development','App Development','Startup','Internship','New Idea','CO-FOUNDER','Hardware and Electronics','EdTech (Educational Technology)','Hire Talent','Community','Team Member','Others'] },
+        { name: 'Healthcare', subsectors: ['Invest','Partner','Collaborate','Volunteer','Join Research','Startup','Assistance/Worker','Team Member','Others'] },
+        { name: 'Finance', subsectors: ['Invest','Partner','Consult','Collaborate','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Retail & E-Commerce', subsectors: ['Invest','Partner','Collaborate','Market Products','Provide Logistics','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Product Manufacturing', subsectors: ['Invest','Partner','Collaborate','Supply Chain Support','Equipment Sharing','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Education', subsectors: ['Invest','Partner','Collaborate','Teach or Mentor','Develop Curriculum','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Real Estate', subsectors: ['Invest','Partner','Collaborate','Property Management','Real Estate Development','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Agriculture & Food', subsectors: ['Invest','Partner','Collaborate','Distribute Products','Share Knowledge','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Media & Entertainment', subsectors: ['Invest','Partner','Collaborate','Produce Content','Market Events','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Tourism & Hospitality', subsectors: ['Invest','Partner','Collaborate','Offer Services','Market Destinations','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Transportation & Logistics', subsectors: ['Invest','Partner','Collaborate','Provide Services','Develop Solutions','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Energy & Utilities', subsectors: ['Invest','Partner','Collaborate','Research & Development','Implement Solutions','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Environmental & Sustainability', subsectors: ['Invest','Partner','Collaborate','Advocate','Implement projects','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Arts & Culture', subsectors: ['Invest','Partner','Collaborate','Host Events','Share Expertise','Start New','Assistance/Worker','Team Member','Others'] },
+        { name: 'Social Impact & Non-Profit', subsectors: ['Invest','Partner','Collaborate','Volunteer','Advocate for Causes','Start New','Assistance/Worker','Team Member','Others'] },
+    ];
+
+    function populateSubsectors(type) {
+        var sectorDropdown = document.getElementById(type === 'add' ? 'sector' : 'edit-sector');
+        var subsectorDropdown = document.getElementById(type === 'add' ? 'subsector' : 'edit-subsector');
+        var selectedSectorName = sectorDropdown.value;
+
+        subsectorDropdown.innerHTML = '<option value="">Select Subsector</option>';
+
+        var selectedSector = sectors.find(function(sector) {
+            return sector.name === selectedSectorName;
+        });
+
+        if (selectedSector) {
+            selectedSector.subsectors.forEach(function(subsector) {
+                var option = document.createElement('option');
+                option.value = subsector;
+                option.textContent = subsector;
+                subsectorDropdown.appendChild(option);
+            });
+        }
+    }
+
+    function initializeSectors() {
+        var sectorDropdown = document.getElementById('sector');
+
+        sectors.forEach(function(sector) {
+            var option = document.createElement('option');
+            option.value = sector.name;
+            option.textContent = sector.name;
+            sectorDropdown.appendChild(option);
+        });
+
+        var editSectorDropdown = document.getElementById('edit-sector');
+        sectors.forEach(function(sector) {
+            var option = document.createElement('option');
+            option.value = sector.name;
+            option.textContent = sector.name;
+            editSectorDropdown.appendChild(option);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeSectors();
+
+        var editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                var projectId = this.getAttribute('data-id');
+                var url = this.getAttribute('href');
+
+                fetch(url, {
+                    headers: {
+                        'x-requested-with': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.querySelector('#editModal select[name="category"]').value = data.category;
+                    document.querySelector('#editModal input[name="title"]').value = data.title;
+
+                    var editSectorDropdown = document.querySelector('#editModal select[name="sector"]');
+                    editSectorDropdown.value = data.sector;
+                    
+                    populateSubsectors('edit');
+                    
+                    var editSubsectorDropdown = document.querySelector('#editModal select[name="sub_sector"]');
+                    editSubsectorDropdown.value = data.sub_sector;
+
+                    document.querySelector('#editModal textarea[name="description"]').value = data.description;
+                    document.querySelector('#editForm').action = url;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            });
+        });
+    });
+</script>
+<!--rows of table clickable-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('tr[data-href]');
+        
+        rows.forEach(row => {
+            row.addEventListener('click', function () {
+                window.location.href = this.dataset.href;
+            });
+    
+            // Prevent row click when clicking on a button
+            const buttons = row.querySelectorAll('a');
+            buttons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            });
+        });
+    });
+    </script>
+    
+
+
+
+{% endblock javascript %}
+
+

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block Content %}
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+    <!-- Content START -->
+    <section class="pt-sm-7">
+        <div class="container pt-3 pt-xl-5">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-4 col-xl-3">
+                    <!-- Responsive offcanvas body START -->
+                    <div class="offcanvas-lg offcanvas-start h-100" tabindex="-1" id="offcanvasSidebar">
+                        <!-- Offcanvas header -->
+                        <div class="offcanvas-header bg-light">
+                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">My profile</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                data-bs-target="#offcanvasSidebar" aria-label="Close"></button>
+                        </div>
+                        <!-- Offcanvas body -->
+                        <div class="offcanvas-body p-0">
+                            <div class="card border p-3 w-100">
+                                <!-- Card header -->
+                                <div class="card-header text-center border-bottom">
+                                    <!-- Avatar -->
+                                    <div class="avatar avatar-xl position-relative mb-2">
+                                        <img class="avatar-img rounded-circle border border-2 border-white"
+                                            src="{{user.profile_image.url}}" alt="">
+                                        <a href="{% url "viewProfile" user.username %}" class="btn btn-sm btn-round btn-dark position-absolute top-50 start-100 translate-middle mt-4 ms-n3" data-bs-toggle="tooltip" data-bs-title="Edit profile">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    </div>
+                                    <h6 class="mb-0">{{ user.full_name }}</h6>
+                                    <a href="#" class="text-reset text-primary-hover small">{{ user.email }}</a>
+                                </div>
+
+                                <!-- Card body START -->
+                                <div class="card-body p-0 mt-4">
+                                    <!-- Sidebar menu item START -->
+                                    <ul class="nav nav-pills-primary-border-start flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link {% if '@'|add:request.user.username in request.path %}active{% endif %}" href="{% url 'viewProfile' username=request.user.username %}"><i class="bi bi-person fa-fw me-2"></i>My profile</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link {% if request.path == '/account-notification/' %}active{% endif %}" href="{% url "account_notification" %}"><i class="bi bi-bell fa-fw me-2"></i>Notification</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link {% if request.path == '/account-projects/' %}active{% endif %}" href="{% url "account_projects" %}"><i class="bi bi-briefcase fa-fw me-2"></i>My projects</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link {% if request.path == '/messages/' %}active{% endif %}" href="{% url "chat" %}"><i class="bi bi-chat fa-fw me-2"></i>Messages</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-danger" href="{% url "logout" %}"><i class="fas fa-sign-out-alt fa-fw me-2"></i>Sign Out</a>
+                                        </li>
+                                    </ul>
+                                    <!-- Sidebar menu item END -->
+                                </div>
+                                <!-- Card body END -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% block UserMainContent %}{% endblock UserMainContent %}
+
+            </div>
+        </div>
+    </section>
+    <!-- Content END -->
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+{% endblock Content %}

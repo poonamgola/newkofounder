@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block Content %}
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+
+    <!-- Blog list and sidebar START -->
+    <section class="pt-7">
+        <div class="container pt-3 pt-xl-5">
+            <!-- Title & Tab -->
+            <div class="d-lg-flex justify-content-between align-items-center">
+                <!-- Title -->
+                <h4 class="mb-3 mb-lg-0">Our Communities</h4>
+                <!-- Tabs -->
+                <ul class="nav nav-pills gap-2 nav-pills-light">
+                    <li class="nav-item">
+                        <a href="{% url 'communities' %}" class="nav-link {% if not request.GET.community %}active{% endif %}">All Posts</a>
+                    </li>
+                    {% for community in communities %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.GET.community == community.name %}active{% endif %}" href="?community={{ community.name }}">{{ community.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Search Form -->
+            <form class="col-sm-6 bg-body border rounded-2 position-relative p-2 mt-4 mt-md-5" method="GET" action="{% url 'communities' %}">
+                <div class="input-group">
+                    <input class="form-control focus-shadow-none border-0 me-1" type="text" name="search_filter" placeholder="Search here..." value="{{ request.GET.search_filter }}">
+                    <button type="submit" class="btn btn-dark rounded-2 mb-0">Search</button>
+                </div>
+            </form>
+
+            <!-- Post List -->
+            {% for post in paginated_posts %}
+                <!-- Job item -->
+                <div class="card card-body bg-light d-md-flex justify-content-md-between align-items-md-center flex-md-row p-4 mb-3 mt-3">
+                    <div class="mb-4 mb-md-0">
+                        <!-- Badge -->
+                        <div class="badge text-bg-dark mb-3">{{ post.category.name }}</div>
+                        <!-- Title -->
+                        <h5 class="mb-0"><a href="{% url 'community_single' post.slug %}" class="stretched-link">{{ post.title }}</a></h5>
+
+                        <!-- List -->
+                        <p class="mt-3">
+                            {% if post.description|length > 300 %}
+                                {{ post.description|slice:":300" }}.......<a href="{% url 'community_single' post.slug %}" ><strong>Read More</strong></a> 
+                            {% else %}
+                                {{ post.description }}
+                            {% endif %}
+                        </p>
+                       
+                        <div class="hstack gap-3 gap-sm-4 flex-wrap mt-3">
+                            <span><i class="bi bi-hand-thumbs-up me-2"></i>{{ post.likes }}</span>
+                            <span><i class="bi bi-hand-thumbs-down me-2"></i>{{ post.dislikes }}</span>
+                        </div>
+                    </div>
+                    <!-- Button -->
+                    <div id="cp_btn" style="display: flex; width: -webkit-fill-available; flex-direction: row-reverse;">
+                        <a href="{% url 'community_single' post.slug %}" class="btn btn-primary mb-0">Apply Now<i class="bi bi-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Pagination START -->
+            <div class="row mt-7">
+                <div class="col-12 mx-auto">
+                    <ul class="pagination pagination-primary-soft d-flex justify-content-center mb-0">
+                        {% if paginated_posts.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ paginated_posts.previous_page_number }}{% if request.GET.search_filter %}&search_filter={{ request.GET.search_filter }}{% endif %}">Prev</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Prev</a>
+                            </li>
+                        {% endif %}
+
+                         <!-- Page links -->
+                        {% for page_number in paginated_posts.paginator.page_range %}
+                        {% if page_number == paginated_posts.number %}
+                             <li class="page-item active"><a class="page-link" href="#">{{ page_number }}</a></li>
+                        {% else %}
+                             <li class="page-item"><a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        
+                        {% comment %} <li class="page-item active">
+                            <a class="page-link" href="#">{{ paginated_posts.number }}</a>
+                        </li> {% endcomment %}
+
+                        {% if paginated_posts.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ paginated_posts.next_page_number }}{% if request.GET.search_filter %}&search_filter={{ request.GET.search_filter }}{% endif %}">Next</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <!-- Pagination END -->
+
+        </div>
+    </section>
+    <!-- Blog list and sidebar END -->
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+{% endblock Content %}

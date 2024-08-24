@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block Content %}
+    <!-- **************** MAIN CONTENT START **************** -->
+    <main>
+        <!-- Case studies detail START -->
+        <section class="pt-xl-9">
+            <div class="container pt-4 pt-xl-0 position-relative z-index-2">
+
+                <!-- Title -->
+                <h1 class="h2 mb-4 mb-sm-6 text-center">{{user_data.full_name}}</h1>
+
+                <!-- Image and content -->
+                <div class="row justify-content-evenly flex-lg-nowrap mb-7">
+                    <div class="col-sm-6 d-flex mb-5 mb-sm-6 mb-lg-0">
+                        <!-- Image -->
+                        <img src="{{user.profile_image.url}}" class="rounded-circle" alt="portfolio-img">
+                    </div>
+                
+                    <div class="col-sm-6 ps-lg-6">
+                        {% comment %} <p class="mb-4">{{user_data.skills_expertise}}</p> {% endcomment %}
+
+                        <div class="d-flex align-items-center flex-wrap mb-4">
+                            <ul class="list-inline mb-0">
+                                    {% for i in "12345" %}
+                                        {% if i <= avg_rating|default:"0"|floatformat %}
+                                            <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                        {% else %}
+                                            <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                <li class="list-inline-item me-0 heading-color fw-normal">({{ avg_rating|default:"0"|floatformat:1 }})</li>
+                            </ul>
+                            <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
+                            <a href="#reviews" class="heading-color text-primary-hover mb-0">{{ reviews.count }} reviews</a>
+                        </div>
+
+                        <!-- Project list -->
+                        <table class="table table-borderless mb-4">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="heading-color px-0 py-2">Role</th>
+                                    <td class="px-0 py-2">{{user_data.role}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="heading-color px-0 py-2">Sector</th>
+                                    <td class="px-0 py-2">{{user_data.sector}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="heading-color px-0 py-2">ZipCode</th>
+                                    <td class="px-0 py-2">{{user_data.zip_code}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="heading-color px-0 py-2">City</th>
+                                    <td class="px-0 py-2">{{user_data.city}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                
+                        <!-- Button -->
+                        {% if request.user == user_data %}
+                            <a href="{% url 'viewProfile' user.username %}" class="btn btn-dark mb-0">Edit Profile</a>
+                        {% else %}
+                            <a href="{% url 'chat_list_view' %}" class="btn btn-dark mb-0">Chat</a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!--Description-->
+                <div class="row justify-content-center">
+                    <h5>Description</h5>
+                    <p>{{user_data.skills_expertise}}</p>
+                </div>
+
+                <!-- Project Posting -->
+                <div class="row justify-content-center">
+                    <div class="col-md-4 text-center mb-3 mt-3">
+                        <h2>Project Posts</h2>
+                    </div>
+                    {% for post in posts %}
+                        <!-- Job item -->
+                        <div class="card card-body bg-light d-md-flex justify-content-md-between align-items-md-center flex-md-row p-4 mb-3 mt-3">
+                            <div class="mb-4 mb-md-0">
+                                <!-- Badge -->
+                                <div class="badge text-bg-dark mb-3">{{post.category.name}}</div>
+                                <!-- Title -->
+                                <h5 class="mb-0"><a href="{% url 'community_single' post.slug %}" class="stretched-link">{{post.title}}</a></h5>
+
+                                <!-- List -->
+                                <p class="mt-3">{{post.description}}</p>
+                                <div class="hstack gap-3 gap-sm-4 flex-wrap mt-3">
+                                    {% if post.location %}
+                                        <span><i class="bi bi-geo-alt me-2"></i>{{post.location}}</span>
+                                    {% endif %}
+                                    
+                                    {% if post.timeline %}
+                                        <span><i class="bi bi-clock me-2"></i>{{post.timeline}}</span>
+                                    {% endif %}
+
+                                    {% if post.price %}
+                                        <span><i class="bi bi-briefcase me-2"></i>${{post.price}}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Button -->
+                            <div id="cp_btn" style="display: flex; width: -webkit-fill-available; flex-direction: row-reverse;"><a href="{% url 'community_single' post.slug %}" class="btn btn-primary mb-0">Read more<i class="bi bi-arrow-right ms-2"></i></a></div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+
+                {% comment %} Pagination {% endcomment %}
+                
+                <div class="row">
+                    <div class="col-12 mx-auto">
+                        <ul class="pagination pagination-primary-soft d-flex justify-content-center mb-0">
+                            {% if posts_data.has_previous %}
+                                {% comment %} <li class="page-item">
+                                    <a class="page-link" href="?page=1">First</a>
+                                </li> {% endcomment %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts_data.previous_page_number }}">Prev</a>
+                                </li>
+                            {% else %}
+                                {% comment %} <li class="page-item disabled">
+                                    <span class="page-link">First</span>
+                                </li> {% endcomment %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Prev</span>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in posts_data.paginator.page_range %}
+                                {% if posts_data.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% elif num > posts_data.number|add:'-3' and num < posts_data.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if posts_data.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts_data.next_page_number }}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts_data.paginator.num_pages }}">Last</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Next</span>
+                                </li>
+                                {% comment %} <li class="page-item disabled">
+                                    <span class="page-link">Last</span>
+                                </li> {% endcomment %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Case studies detail END -->
+
+        <!-- Rating & review START -->
+        <section class="pt-0" id="reviews">
+            <div class="container">
+                <!-- Title -->
+                <h2 class="h4 mb-5">Rating &amp; review</h2>
+        
+                <div class="row">
+                    <!-- Rating START -->
+                    <div class="col-lg-5 pe-lg-5 mb-5 mb-lg-0">
+                        <!-- Rating and progressbar -->
+                        <div class="border rounded-2 p-4">
+                            <div class="row">
+                                <!-- Total rating -->
+                                <div class="col-md-5">
+                                    <!-- Info -->
+                                    <h2 class="mb-0">{{ avg_rating|default:"0"|floatformat:1 }}</h2>
+                                    <!-- Star -->
+                                    <ul class="list-inline mb-2">
+                                        {% for i in "12345" %}
+                                            {% if i <= avg_rating|default:"0"|floatformat %}
+                                                <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                            {% else %}
+                                                <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    <p class="mb-2">Based on {{ reviews.count }} Reviews</p>
+                                </div>
+
+                                <!-- Progress bar -->
+                                <div class="col-md-7">
+                                    {% for rating_count in rating_counts %}
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress progress-sm bg-warning bg-opacity-15 w-100 me-3">
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ rating_count.count|divisibleby:reviews.count|yesno:"100,0" }}%" aria-valuenow="{{ rating_count.count|divisibleby:reviews.count|yesno:"100,0" }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <span class="heading-color">{{ rating_count.rating }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div> <!-- Row END -->
+                        </div>
+                    </div>
+                    <!-- Rating END -->
+        
+                    <!-- Review START -->
+                    <div class="col-lg-7">
+                        <!-- Title and Select -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Title -->
+                            <h5 class="mb-0">Sort by</h5>
+                            <!-- Select -->
+                            <div class="col-xl-3">
+                                <select class="form-select" aria-label="Default select example">
+                                    <option value="1">Most Recent</option>
+                                    <option value="2">Most Viewed</option>
+                                    <option value="3">Helpful</option>
+                                </select>
+                            </div>	
+                        </div>
+        
+                        <hr class="my-4"> <!-- Divider -->
+                        
+                        {% for review in reviews %}
+                            <!-- Review item -->
+                            <div class="d-flex">
+                                <img class="avatar avatar-md rounded-circle float-start me-3" src="{{ review.reviewer.profile_image.url }}" alt="avatar">
+                                <div>
+                                    <div class="d-sm-flex justify-content-between mb-2">
+                                        <div>
+                                            <h6 class="m-0">{{ review.reviewer.full_name }}</h6>
+                                            <span class="me-3 small">{{ review.created_at|date:"F j, Y, g:i a" }}</span>
+                                        </div>	
+                                        <!-- Rating Star -->
+                                        <ul class="list-inline mb-0">
+                                            {% for i in "12345" %}
+                                                <li class="list-inline-item small me-0">
+                                                    <i class="fas fa-star{% if review.rating|to_int < i|to_int %}-half-alt{% endif %} text-warning"></i>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <p>{{ review.content }}</p>
+                                    
+                                    <span>Was it helpful?</span>
+                                    <div class="btn-group ms-md-2" role="group" aria-label="Basic radio toggle button group">
+                                        <!-- Yes button -->
+                                        <input type="radio" class="btn-check" name="btnradio{{ forloop.counter }}" id="btnradior1{{ forloop.counter }}">
+                                        <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradior1{{ forloop.counter }}"><i class="bi bi-hand-thumbs-up"></i></i> Yes</label>
+                                        <!-- No button -->
+                                        <input type="radio" class="btn-check" name="btnradio{{ forloop.counter }}" id="btnradior2{{ forloop.counter }}">
+                                        <label class="btn btn-outline-secondary btn-sm mb-0" for="btnradior2{{ forloop.counter }}"> No <i class="bi bi-hand-thumbs-down"></i></i></label>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <hr class="my-4"> <!-- Divider -->
+                        {% endfor %}
+        
+                        <!-- button -->
+                        <div class="mt-4 text-end">
+                            <a class="btn btn-primary-soft mb-0" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                Write a review
+                            </a>
+                        </div>
+        
+                        <!-- Collapse body -->
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body">
+                                <form method="POST" action="{% url "profile" user_data.username %}">
+                                    {% csrf_token %}
+                                    <select class="form-select mb-3" aria-label="Default select example" name="rating">
+                                        <option value="5">★★★★★ (5/5)</option>
+                                        <option value="4">★★★★☆ (4/5)</option>
+                                        <option value="3">★★★☆☆ (3/5)</option>
+                                        <option value="3">★★☆☆☆ (2/5)</option>
+                                        <option value="1">★☆☆☆☆ (1/5)</option>
+                                    </select>
+                                    <!-- Text area -->
+                                    <textarea class="form-control mb-3" id="exampleFormControlTextarea1" name="content" placeholder="Your review" rows="3"></textarea>
+                                    <!-- Button -->
+                                    <button type="submit" class="btn btn-primary mb-0">Post It <i class="bi fa-fw bi-arrow-right ms-2"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Review END -->
+                </div>
+            </div>
+        </section>
+        <!-- Rating & review START END -->
+        
+    </main>
+    <!-- **************** MAIN CONTENT END **************** -->
+{% endblock Content %}

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+
+    <title>We Founder - Connecting Local Innovators and Resources</title>
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Webestica.com">
+    <meta name="description" content="Technology and Corporate Bootstrap Theme">
+
+    <!-- Dark mode -->
+    <script>
+        const storedTheme = localStorage.getItem('theme')
+
+        const getPreferredTheme = () => {
+            if (storedTheme) {
+                return storedTheme
+            }
+            return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'light'
+        }
+
+        const setTheme = function(theme) {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-bs-theme', 'dark')
+            } else {
+                document.documentElement.setAttribute('data-bs-theme', theme)
+            }
+        }
+
+        setTheme(getPreferredTheme())
+
+        window.addEventListener('DOMContentLoaded', () => {
+            var el = document.querySelector('.theme-icon-active');
+            if (el != 'undefined' && el != null) {
+                const showActiveTheme = theme => {
+                    const activeThemeIcon = document.querySelector('.theme-icon-active use')
+                    const btnToActive = document.querySelector([data-bs-theme-value="${theme}"])
+                    const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href')
+
+                    document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+                        element.classList.remove('active')
+                    })
+
+                    btnToActive.classList.add('active')
+                    activeThemeIcon.setAttribute('href', svgOfActiveBtn)
+                }
+
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                    if (storedTheme !== 'light' || storedTheme !== 'dark') {
+                        setTheme(getPreferredTheme())
+                    }
+                })
+
+                showActiveTheme(getPreferredTheme())
+
+                document.querySelectorAll('[data-bs-theme-value]')
+                    .forEach(toggle => {
+                        toggle.addEventListener('click', () => {
+                            const theme = toggle.getAttribute('data-bs-theme-value')
+                            localStorage.setItem('theme', theme)
+                            setTheme(theme)
+                            showActiveTheme(theme)
+                        })
+                    })
+
+            }
+        })
+    </script>
+    <style>
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        button[disabled] {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+    </style>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static "theme-assets/images/favicon.png" %}">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static "theme-assets/vendor/font-awesome/css/all.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "theme-assets/vendor/bootstrap-icons/bootstrap-icons.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "theme-assets/vendor/stepper/css/bs-stepper.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "theme-assets/vendor/swiper/swiper-bundle.min.css" %}">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static "theme-assets/css/style.css" %}">
+
+</head>
+
+<body>
+
+    <!-- **************** MAIN CONTENT START **************** -->
+    <main>
+        <div class="row g-0">
+            <!-- left -->
+            <div class="col-lg-7 vh-100 d-none d-lg-block">
+                <!-- Slider START -->
+                <div class="swiper h-100" data-swiper-options='{  
+					"pagination":{
+						"el":".swiper-pagination",
+						"clickable":"true"
+					}}'>
+
+                    <!-- Slider items START -->
+                    <div class="swiper-wrapper">
+                        <!-- Item -->
+                        <div class="swiper-slide">
+                            <div class="card rounded-0 h-100" data-bs-theme="dark" style="background-image:url({% static "theme-assets/images/auth/01.png" %}); background-position: center left; background-size: cover;">
+                                <!-- Bg overlay -->
+                                <div class="bg-overlay bg-dark opacity-5"></div>
+
+                                <!-- Card info -->
+                                <div class="card-img-overlay z-index-2 p-7">
+                                    <div class="d-flex flex-column justify-content-end h-100">
+                                        <!-- Quote -->
+                                        <h4 class="fw-light">"With unwavering determination, they navigate the complexities of the industry, forging strategic partnerships and driving transformative change."</h4>
+                                        <!-- Info -->
+                                        <div class="d-flex justify-content-between mt-5">
+                                            <div>
+                                                <h5 class="mb-0">Emma Watson</h5>
+                                                <span>Founder, catalog</span>
+                                            </div>
+                                            <!-- Rating star -->
+                                            <ul class="list-inline mb-1">
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small"><i class="fa-solid fa-star-half-alt text-white"></i></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item -->
+                        <div class="swiper-slide">
+                            <div class="card rounded-0 h-100" data-bs-theme="dark" style="background-image:url({% static "theme-assets/images/auth/02.png" %}); background-position: center left; background-size: cover;">
+                                <!-- Bg overlay -->
+                                <div class="bg-overlay bg-dark opacity-5"></div>
+
+                                <!-- Card info -->
+                                <div class="card-img-overlay z-index-2 p-7">
+                                    <div class="d-flex flex-column justify-content-end h-100">
+                                        <!-- Quote -->
+                                        <h4 class="fw-light">"An exceptional agency CEO is a visionary, constantly pushing the boundaries of creativity and pushing their team to new heights. They inspire with their passion and cultivate a culture of trust and respect."</h4>
+                                        <!-- Info -->
+                                        <div class="d-flex justify-content-between mt-5">
+                                            <div>
+                                                <h5 class="mb-0">Carolyn Ortiz</h5>
+                                                <span>CEO, mizzle</span>
+                                            </div>
+                                            <!-- Rating star -->
+                                            <ul class="list-inline mb-1">
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small"><i class="fa-solid fa-star-half-alt text-white"></i></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item -->
+                        <div class="swiper-slide">
+                            <div class="card rounded-0 h-100" data-bs-theme="dark" style="background-image:url({% static "theme-assets/images/auth/03.png" %}); background-position: center left; background-size: cover;">
+                                <!-- Bg overlay -->
+                                <div class="bg-overlay bg-dark opacity-5"></div>
+
+                                <!-- Card info -->
+                                <div class="card-img-overlay z-index-2 p-7">
+                                    <div class="d-flex flex-column justify-content-end h-100">
+                                        <!-- Quote -->
+                                        <h4 class="fw-light">" Through collaboration and strategic direction, they steer the agency towards its goals, navigating the ever-evolving landscape with agility and grace."</h4>
+                                        <!-- Info -->
+                                        <div class="d-flex justify-content-between mt-5">
+                                            <div>
+                                                <h5 class="mb-0">Dennis Barrett</h5>
+                                                <span>Founder, catalog</span>
+                                            </div>
+                                            <!-- Rating star -->
+                                            <ul class="list-inline mb-1">
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small me-0"><i class="fa-solid fa-star text-white"></i></li>
+                                                <li class="list-inline-item small"><i class="fa-solid fa-star-half-alt text-white"></i></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider Pagination -->
+                    <div class="swiper-pagination swiper-pagination-line mb-3"></div>
+                </div>
+            </div>
+
+            <!-- Right -->
+            <div id="stepper" class="bs-stepper stepper-outline position-relative col-sm-10 col-lg-5 d-flex m-auto vh-100">
+               
+                <div class="bs-stepper-content d-flex justify-content-center m-auto w-100">
+                    <form class="w-100" id="multiStepForm" action="{% url 'signUpSteps' user.id %}" method="POST">
+                        {% csrf_token %}
+                        <!-- Step 1 -->
+                        <div class="step">
+                            <a href="index.html"><img src="{% static 'theme-assets/images/logo1.png' %}" class="h-50px mb-4" alt="logo"></a>
+                            <h2 class="mb-3" style="color:darkgrey">"TOGETHER, WE BUILD TOMORROW!"</h2>
+                            <h2 class="mb-3" style="color:darkgrey">LET'S GET START</h2>
+                            {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-success d-flex align-items-center container" id="message_alert" role="alert">
+                                <i class="fa-solid fa-circle-check fa-lg m-2"></i> 
+                                <div class="message">
+                                    {{ message }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            <div class="input-floating-label form-floating mb-4">
+                                <select class="form-select form-select-lg" id="role" name="role" required>
+                                    <option selected="selected" disabled>Role</option>
+                                    <option>Freelancers</option>
+                                    <option>Collaborators</option>
+                                    <option>Investors</option>
+                                </select>
+                            </div>
+                            <div class="input-floating-label form-floating mb-4">
+                            <select class="form-select form-select-lg" aria-label="Default Sector" name="sector" required>
+                                    <option selected="selected" disabled>Sector</option>
+                                    <option>Technology</option>
+                                    <option>Healthcare</option>
+                                    <option>Finance</option>
+                                    <option>Retail & E-Commerce</option>
+                                    <option>Product Manufacturing</option>
+                                    <option>Education</option>
+                                    <option>Real Estate</option>
+                                    <option>Agriculture & Food</option>
+                                    <option>Medical Entertainment</option>
+                                    <option>Tourism & Hospitality</option>
+                                    <option>Transportation & Logistics</option>
+                                    <option>Energy & Utilities</option>
+                                    <option>Environmental & Sustainability</option>
+                                    <option>Social Impact & Non-Profit</option>
+                                </select>
+                            </div>
+
+                            <div class="input-floating-label form-floating mb-4">
+                                <input type="text" id="city" name="city" class="form-control" placeholder="EX.: Varanasi, New York" required>
+                                <label for="city">City</label>
+                            </div>
+                            <div class="input-floating-label form-floating mb-4">
+                                <input type="text" id="zip_code" name="zip_code" class="form-control" placeholder="Eg.: 221005" required>
+                                <label for="zip_code">Zip Code</label>
+                            </div>
+                            <div class="d-grid text-center">
+                                <button type="button" class="btn btn-dark mb-0" onclick="nextStep()">Next</button>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="step">
+                            <a href="index.html"><img src="{% static 'theme-assets/images/logo-icon.svg' %}" class="h-50px mb-4" alt="logo"></a>
+                            <h2 class="mb-1">Your skills &amp; expertise*</h2>
+                            <p class="mb-4">Outline your primary/core skills in a sentence or two. <br>You can elaborate later.</p>
+                            <div class="input-floating-label form-floating mb-4 rounded">
+                                <textarea class="w-75 p-3" name="skills_expertise" id="skills_expertise" rows="7" placeholder="Take a minute to outline 2 or 3 of your skills/expertise" required></textarea>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label heading-color">Upload CV </label>
+                                <input type="file" class="form-control form-control-lg" name="cv">
+                            </div>
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-dark mb-0" onclick="prevStep()">Previous</button>
+                                <button type="submit" class="btn btn-dark mb-0">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <script>
+                        let currentStep = 0;
+                        const steps = document.querySelectorAll('.step');
+                    
+                        function showStep(step) {
+                            steps.forEach((s, index) => {
+                                s.style.display = index === step ? 'block' : 'none';
+                            });
+                        }
+                    
+                        function nextStep() {
+                            if (currentStep < steps.length - 1) {
+                                currentStep++;
+                                showStep(currentStep);
+                            }
+                        }
+                    
+                        function prevStep() {
+                            if (currentStep > 0) {
+                                currentStep--;
+                                showStep(currentStep);
+                            }
+                        }
+                    
+                        document.addEventListener('DOMContentLoaded', () => {
+                            showStep(currentStep);
+                        });
+                    
+                      
+                    </script>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- **************** MAIN CONTENT END **************** -->
+
+    <!-- Back to top -->
+    <div class="back-top"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static "theme-assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js" %}"></script>
+
+    <!--Vendors-->
+    <script src="{% static "theme-assets/vendor/pswmeter/pswmeter.min.js" %}"></script>
+    <script src="{% static "theme-assets/vendor/stepper/js/bs-stepper.min.js" %}"></script>
+    <script src="{% static "theme-assets/vendor/swiper/swiper-bundle.min.js" %}"></script>
+
+    <!-- Theme Functions -->
+    <script src="{% static "theme-assets/js/functions.js" %}"></script>
+</body>
+
+</html>

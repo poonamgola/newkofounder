@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+    {% block Content %}
+    <!-- **************** MAIN CONTENT START **************** -->
+    <main>
+        <!-- Blog detail START -->
+        <section class="pt-lg-8">
+
+            <div class="container pt-4 pt-lg-0">
+                <div class="row g-4 g-sm-7">
+                    <!-- Main content START -->
+                    <div class="col-lg-8">
+                        <!-- Title -->
+                        <h1 class="h2 mb-0">{{post.title}}</h1>
+
+                        <!-- Action -->
+                        <div class="d-flex align-items-center flex-wrap mt-4">
+                            <a href="#" class="badge text-bg-dark mb-0">{{post.category.name}}</a>
+                            <span class="text-secondary opacity-3 mx-3">|</span>
+                            <div class="dropdown">
+                                <a href="#" class="text-secondary text-primary-hover" id="cardFeedAction" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-share me-2"></i>14
+						</a>
+                                <!-- Card feed action dropdown menu -->
+                                <ul class="dropdown-menu min-w-auto" aria-labelledby="cardFeedAction">
+                                    <li><a class="dropdown-item" href="#"> <i class="bi bi-facebook fa-fw me-2"></i>Facebook</a></li>
+                                    <li><a class="dropdown-item" href="#"> <i class="bi bi-instagram fa-fw me-2"></i>Instagram</a></li>
+                                    <li><a class="dropdown-item" href="#"> <i class="bi bi-whatsapp fa-fw me-2"></i>Whatsapp</a></li>
+                                    <li><a class="dropdown-item" href="#"> <i class="fa-regular fa-paste fa-fw me-2"></i>Copy link</a></li>
+                                </ul>
+                            </div>
+                            <span class="text-secondary opacity-3 mx-3">|</span>
+                            <a href="#" class="text-secondary text-primary-hover mb-0"><i class="bi bi-eye-fill me-2"></i>{{post.views_count}}</a>
+                        </div>
+
+                        <!-- Image -->
+                        <img src="{{post.featured_image.url}}" class="img-fluid rounded mt-5" alt="blog-img" style="width: 100% !important; object-fit: cover;">
+
+                        <!-- Content -->
+                        <p class="mt-5">{{post.content | safe}}</p>
+                    </div>
+                    <!-- Main content END -->
+
+                    <!-- Sidebar START -->
+                    <div class="col-lg-4 ps-xl-6">
+                        <!-- Related post -->
+                        <div class="align-items-center mt-5">
+                            <h6 class="mb-3 d-inline-block">Related post:</h6>
+
+                            <ul class="list-group list-group-flush">
+                                {% for related_post in related_posts %}
+                                    <li class="list-group-item ps-0"><a href="{% url 'blog_single' related_post.slug %}" class="heading-color text-primary-hover fw-semibold">{{ related_post.title }}</a></li>
+                                {% endfor %}
+                                </ul>
+                        </div>
+
+                        <!-- Popular tags -->
+                        <div class="align-items-center mt-5">
+                            <h6 class="mb-3 d-inline-block">Popular Tags:</h6>
+                            <ul class="list-inline mb-0">
+                                {% for tag in post.tags.all %}
+                                    <li class="list-inline-item"> <a class="btn btn-light btn-sm" href="{% url "tags" tag.slug %}">{{ tag.name }}</a> </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Sidebar END -->
+
+                </div>
+                <!-- Row END -->
+            </div>
+        </section>
+        <!-- Blog detail END -->
+    </main>
+    <!-- **************** MAIN CONTENT END **************** -->
+    {% endblock Content %}

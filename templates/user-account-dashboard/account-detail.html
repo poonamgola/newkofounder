@@ -1,0 +1,288 @@
+{% extends "user-account-dashboard/base.html" %}
+{% load static %}
+{% block UserMainContent %}
+                <!-- Main content -->
+                <div class="col-lg-8 col-xl-9 ps-lg-4 ps-xl-6">
+                    <!-- Title and offcanvas button -->
+                    <div class="d-flex justify-content-between align-items-center mb-5 mb-sm-6">
+                        <!-- Title -->
+                        <h1 class="h3 mb-0">My profile</h1>
+
+                        <!-- Advanced filter responsive toggler START -->
+                        <button class="btn btn-primary d-lg-none flex-shrink-0 ms-2" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
+                            aria-controls="offcanvasSidebar">
+                            <i class="fas fa-sliders-h"></i> Menu
+                        </button>
+                        <!-- Advanced filter responsive toggler END -->
+
+                    </div>
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-success d-flex align-items-center container" id="message_alert" role="alert">
+                        <i class="fa-solid fa-circle-check fa-lg m-2"></i> 
+                        <div class="message">
+                            {{ message }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <!-- Personal Information -->
+                    <form action="{% url 'updateProfile' user.username %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card bg-transparent p-0">
+                            <!-- Card header -->
+                            <div class="card-header bg-transparent border-bottom p-0 pb-3">
+                                <h6 class="mb-0">Personal Information</h6>
+                            </div>
+
+                            <!-- Card body -->
+                            <div class="card-body px-0">
+                                <div class="row g-4">
+                                    <!-- Profile photo -->
+                                    <div class="col-12">
+                                        <label class="form-label">Profile picture</label>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Avatar display with a replace button -->
+                                            <label class="position-relative me-2" title="Replace this pic">
+                                                <span class="avatar avatar-xl">
+                                                    <img id="avatar-img" class="avatar-img rounded-circle border border-white border-3 shadow"
+                                                         src="{{user.profile_image.url}}" alt="User Avatar">
+                                                </span>
+                                                <button class="uploadremove" title="Remove avatar">
+                                                    <i class="bi bi-x text-white"></i>
+                                                </button>
+                                            </label>
+                                        
+                                            <!-- Upload button to trigger file input -->
+                                            <label class="btn btn-sm btn-dark mb-0" for="file-input">Change</label>
+                                        
+                                            <!-- Hidden file input for avatar change -->
+                                            <input class="form-control d-none" id="file-input" name="profile_image" type="file" accept="image/*">
+                                        </div>
+                                    </div>
+
+                                    <!-- Full Name -->
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" name="full_name" class="form-control" value="{{user.full_name}}"
+                                            placeholder="Enter your Full Name">
+                                    </div>
+
+                                    <!-- Username -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" name="username" class="form-control" value="{{user.username}}"
+                                            placeholder="Enter your Username">
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email address</label>
+                                        <input type="email" name="email" class="form-control" value="{{user.email}}"
+                                            placeholder="Enter your email id">
+                                    </div>
+
+                                    <!-- Mobile -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mobile</label>
+                                        <input type="text" name="phone" class="form-control" value="{{user.phone}}"
+                                            placeholder="Enter your mobile number">
+                                    </div>
+
+
+                                    <!-- Nationality -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nationality</label>
+                                        <select class="form-select" name="nationality">
+                                            <option value="">Select your country</option>
+                                            <option>USA</option>
+                                            <option selected>{{user.nationality}}</option>
+                                            <option>India</option>
+                                            <option>UK</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Gender -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Select Gender</label>
+                                        <div class="input-group">
+                                            <div class="form-control">
+                                                <div class="form-check radio-bg-light">
+                                                    <input class="form-check-input" type="radio" name="gender"
+                                                        id="gender_male" value="Male" {% if user.gender == 'Male' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="gender_male">
+                                                        Male
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-control">
+                                                <div class="form-check radio-bg-light">
+                                                    <input class="form-check-input" type="radio" name="gender"
+                                                        id="gender_female" value="Female" {% if user.gender == 'Female' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="gender_female">
+                                                        Female
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-control">
+                                                <div class="form-check radio-bg-light">
+                                                    <input class="form-check-input" type="radio" name="gender"
+                                                        id="gender_other" value="Other" {% if user.gender == 'Other' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="gender_other">
+                                                        Others
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Role -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Role</label>
+                                        <input type="text" class="form-control" name="role" value="{{user.role}}" placeholder="Enter your Role">
+                                    </div>                                                                      
+
+                                    <!-- Company -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sector</label>
+                                        <input type="text" class="form-control" name="sector" value="{{user.sector}}" placeholder="Enter your sector">
+                                    </div>
+
+
+                                    <!-- Skills & Expertise -->
+                                    <div class="col-12">
+                                        <label class="form-label">Your Description</label>
+                                        <textarea class="form-control" rows="3" name="skills_expertise"
+                                            placeholder="Outline your primary/core skills in a sentence or two. You can elaborate later.">{{user.skills_expertise}}</textarea>
+                                        <small class="form-text">e.g. Python, ML/AI, developing expert systems,
+                                            LISP<br>UX, Graphic Design, Illustrator, Maya, Unity<br>Financial & market
+                                            analysis, risk sensing, ESG</small>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="col-12">
+                                        <label class="form-label">Address</label>
+                                        <textarea class="form-control" rows="3" name="address"
+                                            spellcheck="false">{{user.address}}</textarea>
+                                    </div>
+
+                                    <!-- Button -->
+                                    <div class="col-12 text-end">
+                                        <button class="btn btn-primary mb-0" type="submit">Save Changes</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="text-center my-5"><i class="bi bi-three-dots"></i></div>
+                    <!-- Divider -->
+
+                    <!-- Update email -->
+                    <form action="{% url 'updateProfile' user.username %}" method="post">
+                        {% csrf_token %}
+                        <div class="card bg-transparent p-0">
+                            <!-- Card header -->
+                            <div class="card-header bg-transparent border-bottom px-0">
+                                <h6 class="mb-0">Update email</h6>
+                            </div>
+
+                            <!-- Card body -->
+                            <div class="card-body px-0">
+                                <!-- Full name -->
+                                <div class="mb-4">
+                                    <p class="mb-4">Your current email address is <span
+                                            class="text-primary">{{user.email}}</span></p>
+                                    <label class="form-label">Email address</label>
+                                    <input type="email" name="email" class="form-control" value="{{user.email}}"
+                                        placeholder="Enter your email id">
+                                </div>
+
+                                <!-- Button -->
+                                <div class="text-end">
+                                    <button class="btn btn-primary mb-0" type="submit">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="text-center my-5"><i class="bi bi-three-dots"></i></div>
+                    <!-- Divider -->
+
+                    <!-- Update password -->
+                    <form action="{% url 'updateProfile' user.username %}" method="post">
+                        {% csrf_token %}
+                        <div class="card bg-transparent p-0">
+                            <!-- Card header -->
+                            <div class="card-header bg-transparent border-bottom px-0">
+                                <h6 class="mb-0">Update password</h6>
+                            </div>
+
+                            <!-- Card body -->
+                            <div class="card-body px-0">
+                                <!-- Current password -->
+                                <div class="mb-3">
+                                    <label class="form-label">Current password</label>
+                                    <input class="form-control" name="current_pass" type="password" placeholder="Enter current password">
+                                </div>
+                                <!-- New password -->
+                                <div class="mb-3">
+                                    <label class="form-label">Enter new password</label>
+
+                                    <div class="position-relative">
+                                        <input type="password" name="new_password" class="form-control fakepassword pe-6" id="psw-input"
+                                            placeholder="Enter your password">
+                                        <span class="position-absolute top-50 end-0 translate-middle-y p-0 me-2">
+                                            <i class="fakepasswordicon fas fa-eye-slash cursor-pointer p-2"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Confirm password -->
+                                <div>
+                                    <label class="form-label">Confirm new password</label>
+                                    <input class="form-control" name="cf_new_password" type="password" placeholder="Enter new password">
+                                </div>
+                                <!-- Button -->
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="submit" class="btn btn-primary mb-0">Change password</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
+{% endblock UserMainContent %}
+
+{% block javascript %}
+<script>
+    // Get references to the DOM elements
+    const fileInput = document.getElementById('file-input');
+    const avatarImg = document.getElementById('avatar-img');
+
+    // Add an event listener to the file input
+    fileInput.addEventListener('change', function(event) {
+        // Get the selected file
+        const file = event.target.files[0];
+
+        // Check if a file was selected and it's an image
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            // Define the onload callback
+            reader.onload = function(e) {
+                // Set the src attribute of the img element to the file's data URL
+                avatarImg.src = e.target.result;
+            };
+
+            // Read the selected file as a data URL
+            reader.readAsDataURL(file);
+        }
+    });
+</script> 
+{% endblock javascript %}

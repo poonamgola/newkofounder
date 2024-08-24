@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+    {% block Content %}
+    <!-- **************** MAIN CONTENT START **************** -->
+    <main>
+        <!-- Main Banner START -->
+        <section class="pt-7">
+            <div class="container pt-3 pt-xl-5">
+                <!-- Slider START -->
+                <div class="swiper rounded" data-swiper-options='{
+			"effect": "fade",
+			"navigation":{
+				"nextEl":".swiper-button-next",
+				"prevEl":".swiper-button-prev"
+			},
+			"pagination":{
+				"el":".swiper-pagination",
+				"clickable":"true"
+			}}'>
+
+                    <!-- Slider items -->
+                    <div class="swiper-wrapper">
+                        {% for category in categories %}
+                            <!-- Slider item -->
+                            <div class="swiper-slide">
+                                <!-- Card item START -->
+                                <div class="card overflow-hidden h-500px text-center rounded-0" style="background-image:url('{{category.featured_image.url}}'); background-position: center left; background-size: cover;">
+                                    <!-- Background dark overlay -->
+                                    <div class="bg-overlay bg-dark opacity-5"></div>
+                                    <!-- Card image overlay -->
+                                    <div class="card-img-overlay d-flex align-items-center p-2 p-sm-4">
+                                        <div class="w-100 my-auto">
+                                            <div class="row justify-content-center">
+                                                <div class="col-11 col-lg-9">
+                                                    <!-- Badge -->
+                                                    <a href="{% url 'category' slug=category.slug %}" class="badge text-bg-dark mb-4">{{ category.name }}</a>
+                                                    <!-- Title -->
+                                                    <h1 class="h2 mb-4"><a href="{% url 'category' slug=category.slug %}" class="text-white text-primary-hover">{{category.title}}</a></h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card item END -->
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Slider Pagination -->
+                    <div class="swiper-pagination swiper-pagination-white mb-3"></div>
+
+                    <!-- Add pagination and navigation elements here -->
+                    <div class="d-flex justify-content-between position-absolute top-50 start-0 w-100 px-1 px-sm-3">
+                        <a href="#" class="btn btn-dark btn-icon rounded-circle mb-0 swiper-button-prev"><i class="bi bi-arrow-left"></i></a>
+                        <a href="#" class="btn btn-dark btn-icon rounded-circle mb-0 swiper-button-next"><i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- Slider END -->
+            </div>
+        </section>
+        <!-- Main Banner END -->
+
+        <!-- Blog list and sidebar START -->
+        <section class="pt-0">
+            <div class="container">
+                <!-- Title & Tab -->
+                <div class="d-lg-flex justify-content-between align-items-center">
+                    <!-- Title -->
+                    <h4 class="mb-3 mb-lg-0">Our Blog</h4>
+                    <!-- Tabs -->
+                    <ul class="nav nav-pills gap-1 nav-pills-light">
+                        <li class="nav-item">
+                            <a class="nav-link active" href={% url "blogs" %}>All blog</a>
+                        </li>
+                        {% for category in categories %}
+                            <li class="nav-item">
+                                <a class="nav-link" href={% url "category" category.slug %}>{{category.name}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Blog grid -->
+                <div class="row g-4 g-sm-5 g-xl-7 mt-0">
+
+                    {% for post in posts %}
+                        <!-- Item -->
+                        <div class="col-md-6 col-lg-4">
+                            <article class="card bg-transparent h-100 p-0">
+                                <!-- Badge -->
+                                <div class="badge text-bg-dark position-absolute top-0 start-0 m-3">{{post.category.name}}</div>
+
+                                <!-- Card image -->
+                                <img src="{{post.featured_image.url}}" class="card-img" alt="{{post.featured_alt_text}}" title="{{post.featured_title}}">
+
+                                <!-- Card Body -->
+                                <div class="card-body px-2 pb-4">
+                                    <!-- Title -->
+                                    <h6 class="card-title mb-2"><a href="#">{{post.title}}</a></h6>
+                                    <p class="small mb-0">{{post.excerpt}}</p>
+                                </div>
+
+                                <!-- Card footer -->
+                                <div class="card-footer bg-transparent d-flex justify-content-between px-2 py-0">
+                                    <a class="icon-link icon-link-hover stretched-link" href="{% url "blog_single" post.slug %}">Read more<i class="bi bi-arrow-right"></i> </a>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination START -->
+                <div class="row mt-7">
+                    <div class="col-12 mx-auto">
+                        <ul class="pagination pagination-primary-soft d-flex justify-content-center mb-0">
+                            <!-- Previous page link -->
+                            {% if posts.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts.previous_page_number }}">Prev</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Prev</a>
+                                </li>
+                            {% endif %}
+
+                            <!-- Page links -->
+                            {% for page_number in posts.paginator.page_range %}
+                                {% if page_number == posts.number %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{ page_number }}</a></li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Next page link -->
+                            {% if posts.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                <!-- Pagination END -->
+            </div>
+        </section>
+        <!-- Blog list and sidebar END -->
+    </main>
+    <!-- **************** MAIN CONTENT END **************** -->
+    {% endblock Content %}
