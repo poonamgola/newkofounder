@@ -62,7 +62,7 @@
                         {% if request.user == user_data %}
                             <a href="{% url 'viewProfile' user.username %}" class="btn btn-dark mb-0">Edit Profile</a>
                         {% else %}
-                            <a href="{% url 'chat_list_view' %}" class="btn btn-dark mb-0">Chat</a>
+                            <a href="{% url 'chat' %}" class="btn btn-dark mb-0">Chat</a>
                         {% endif %}
                     </div>
                 </div>

@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import CustomUser, Review,Thread, ChatMessage
 
 
+from django.contrib import admin
+from .models import Notification
+
+admin.site.register(Notification)
+
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'full_name', 'phone', 'nationality', 'gender', 'role', 'sector')

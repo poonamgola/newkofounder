@@ -22,11 +22,77 @@ from user_account.models import CustomUser
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .models import Notification
+from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.db.models import Avg,Count
 from .models import *
 from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
+import logging
+from django.shortcuts import render
+from .models import Notification
+from django.shortcuts import render
+from .models import Notification
+from django.shortcuts import render
+from .models import Notification
+from django.shortcuts import render
+from .models import Notification
+
+# def notification_view(request):
+#     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+#     return render(request, 'user-account-dashboard/account-notification.html', {'notifications': notifications})
+
+# from django.shortcuts import render
+# from user_account.models import Notification
+
+# def notifications_view(request):
+#     user = request.user
+#     notifications = Notification.objects.filter(user=user)
+#     print(f'Notifications: {list(notifications)}')  # Print notifications to console
+#     return render(request, 'user-account-dashboard/account-notification.html', {'notifications': notifications})
+
+from django.shortcuts import render
+from .models import Notification
+
+def accountNotification(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'user-account-dashboard/account-notification.html', {'notifications': notifications})
+
+
+
+logger = logging.getLogger(__name__)
+
+def send_notification(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        message = request.POST.get('message')
+        
+        try:
+            user = User.objects.get(username=username)
+            Notification.objects.create(user=user, message=message)
+            logger.debug(f'Notification sent to {username} with message: {message}')
+            return JsonResponse({'status': 'success'}, status=200)
+        except User.DoesNotExist:
+            logger.error(f'User with username {username} not found.')
+            return JsonResponse({'status': 'error', 'message': 'User not found'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+
+User = get_user_model()
+
+
+# def get_notifications(request):
+#     if request.is_ajax() and request.method == 'GET':
+#         notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+#         notification_list = list(notifications.values('message', 'created_at'))
+#         for notification in notification_list:
+#             notification['created_at'] = notification['created_at'].strftime('%b %d, %Y %H:%M')  # Format date
+#         return JsonResponse({'notifications': notification_list})
+#     return JsonResponse({'notifications': []})
+
 
 
 # @csrf_exempt
@@ -304,8 +370,6 @@ def userProfile(request, username):
     return render(request, 'user-account-dashboard/account-detail.html', context)
 
 @login_required(login_url='signin')
-def accountNotification(request):
-    return render(request, 'user-account-dashboard/account-notification.html')
 
 @login_required(login_url='signin')
 def accountProjects(request):

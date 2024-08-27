@@ -2,11 +2,12 @@
 {% load static %}
 {% block Content %}
 <!-- **************** MAIN CONTENT START **************** -->
-<!-- in your template file, e.g., post_detail.html -->
+<!-- Include jQuery from CDN -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+<!-- Custom CSS -->
 <style>
-    button{
+    button {
         background: none;
         border: none;
         cursor: pointer;
@@ -15,14 +16,15 @@
     .icon-btn.active {
         color: green;
     }
-
     .icon-btn.dislike.active {
         color: red; /* Change to your desired active color for dislike */
     }
 </style>
 
+<!-- Custom JavaScript -->
 <script>
     $(document).ready(function() {
+        // Handle like button click
         $('#like-btn').click(function() {
             var postId = $(this).data('post-id');
             $.ajax({
@@ -38,6 +40,7 @@
             });
         });
 
+        // Handle dislike button click
         $('#dislike-btn').click(function() {
             var postId = $(this).data('post-id');
             $.ajax({
@@ -52,15 +55,29 @@
                 }
             });
         });
+
+        // Handle profile button click for sending notifications
+        $('.btn-profile').click(function() {
+            var username = $(this).data('username');
+            $.ajax({
+                url: "{% url 'send_notification' %}",
+                type: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'username': username,
+                    'message': 'Someone viewed your profile'
+                },
+                
+                
+                error: function(xhr, errmsg, err) {
+                    alert('Error: ' + errmsg);
+                }
+            });
+        });
     });
-
-
-
-    
 </script>
 
 <main>
-
     <!-- Career detail START -->
     <section class="pt-8">
         <div class="container">
@@ -68,30 +85,27 @@
                 <div class="col">
                     <!-- Title -->        
                     <div class="text-center mb-5">
-                        <h2>{{post.title}}</h2>
+                        <h2>{{ post.title }}</h2>
                     </div>
                 </div>
             </div>
 
             <!-- Info -->
             <div class="row">
-                <div class="card card-body bg-dark d-md-flex justify-content-md-between align-items-md-center flex-md-row p-5 mb-6"
-                    data-bs-theme="dark">
+                <div class="card card-body bg-dark d-md-flex justify-content-md-between align-items-md-center flex-md-row p-5 mb-6" data-bs-theme="dark">
                     <div class="mb-3 mb-md-0">
                         <!-- Title -->
-                        <h4 class="mb-0">{{post.category.name}}</h4>
+                        <h4 class="mb-0">{{ post.category.name }}</h4>
                         <!-- List -->
                         <div class="hstack gap-3 gap-md-4 flex-wrap mt-3" id="post-{{ post.id }}">
                             <button id="like-btn" class="icon-btn bi bi-hand-thumbs-up" data-post-id="{{ post.id }}"> {{ post.likes }} </button>
-                            <button id="dislike-btn" class="icon-btn bi bi-hand-thumbs-down" data-post-id="{{ post.id }}"> {{post.dislikes}} </button>
+                            <button id="dislike-btn" class="icon-btn bi bi-hand-thumbs-down" data-post-id="{{ post.id }}"> {{ post.dislikes }} </button>
                         </div>
-
                     </div>
                     <!-- Button -->
                     <a href="#" class="btn btn-primary mb-0">Apply Now<i class="bi bi-arrow-right ms-2"></i></a>
                 </div>
             </div>
-                    
 
             <!-- Detail list -->
             <div class="row">
@@ -99,7 +113,7 @@
                     <div class="col-md-6">
                         <h6>Sector:</h6>
                         <ul class="list-group list-group-borderless mb-4">
-                            <li class="list-group-item d-flex mb-0"><i class="bi bi-patch-check text-primary me-2"></i>{{post.sector}}</li>
+                            <li class="list-group-item d-flex mb-0"><i class="bi bi-patch-check text-primary me-2"></i>{{ post.sector }}</li>
                         </ul>
                     </div>
                 {% endif %}
@@ -108,7 +122,7 @@
                     <div class="col-md-6">
                         <h6>Sub Sector:</h6>
                         <ul class="list-group list-group-borderless mb-4">
-                            <li class="list-group-item d-flex mb-0"><i class="bi bi-patch-check text-primary me-2"></i>{{post.sub_sector}}</li>
+                            <li class="list-group-item d-flex mb-0"><i class="bi bi-patch-check text-primary me-2"></i>{{ post.sub_sector }}</li>
                         </ul>
                     </div>
                 {% endif %}
@@ -117,55 +131,50 @@
             <!-- Description -->
             <div class="row">
                 <h6 class="mt-4">Description</h6>
-                <p>{{post.description}}</p>
+                <p>{{ post.description }}</p>
             </div>
 
-           <!-- pdf -->
+            <!-- PDF -->
             <div class="row">
                 <h6 class="mt-4">Pdf</h6>
                 {% if post.pdf %}
-                    <a href="{{ post.pdf.url }}" target="_blank">{{post.pdf}}</a>
+                    <a href="{{ post.pdf.url }}" target="_blank">{{ post.pdf }}</a>
                 {% else %}
                     <p>No PDF available.</p>
                 {% endif %}
             </div>
 
-
-                    <div class="card card-body bg-light border p-sm-5 mt-5" id="contact-form">
-                        <!-- Review item -->
-                        <div class="d-flex">
-                            <img class="avatar avatar-md rounded-circle float-start me-3"
-                                src="{{post.user.profile_image.url}}" alt="avatar">
-                            <div style="width: -webkit-fill-available;">
-                                <div class="d-sm-flex justify-content-between mb-2">
-                                    <div>
-                                        <h6 class="m-0">{{post.user.full_name}}</h6>
-                                        <span class="me-3 small">{{post.user.role}}</span>
-                                    </div>
-                                    <!-- Rating Star -->
-                                    <div class="d-flex align-items-center flex-wrap mb-4">
-                                        <ul class="list-inline mb-0">
-                                            {% for i in "12345" %}
-                                                    {% if i <= avg_rating|default:"0"|floatformat %}
-                                                        <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-                                                    {% else %}
-                                                        <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning"></i></li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            <li class="list-inline-item me-0 heading-color fw-normal">({{ avg_rating|default:"0"|floatformat:1 }})</li>
-                                        </ul>
-                                        <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
-                                        <p class="mb-0">{{ reviews.count }} reviews</p>
-                                    </div>
-                                </div>
-                                <p>{{post.user.skills_expertise}}</p>
-                    
-                                <a href="{% url "profile" post.user.username %}" class="btn btn-dark rounded-2 mb-0">Profile</a>
-                                <a href="{% url "chat_view" post.user.username%}" class="btn btn-dark rounded-2 mb-0">Chat</a>    
+            <!-- Contact Form -->
+            <div class="card card-body bg-light border p-sm-5 mt-5" id="contact-form">
+                <!-- Review item -->
+                <div class="d-flex">
+                    <img class="avatar avatar-md rounded-circle float-start me-3" src="{{ post.user.profile_image.url }}" alt="avatar">
+                    <div style="width: -webkit-fill-available;">
+                        <div class="d-sm-flex justify-content-between mb-2">
+                            <div>
+                                <h6 class="m-0">{{ post.user.full_name }}</h6>
+                                <span class="me-3 small">{{ post.user.role }}</span>
+                            </div>
+                            <!-- Rating Star -->
+                            <div class="d-flex align-items-center flex-wrap mb-4">
+                                <ul class="list-inline mb-0">
+                                    {% for i in "12345" %}
+                                        {% if i <= avg_rating|default:"0"|floatformat %}
+                                            <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
+                                        {% else %}
+                                            <li class="list-inline-item me-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <li class="list-inline-item me-0 heading-color fw-normal">({{ avg_rating|default:"0"|floatformat:1 }})</li>
+                                </ul>
+                                <span class="text-secondary opacity-3 mx-2 mx-sm-3">|</span>
+                                <p class="mb-0">{{ reviews.count }} reviews</p>
                             </div>
                         </div>
+                        <p>{{ post.user.skills_expertise }}</p>
+                        <a href="{% url 'profile' post.user.username %}" class="btn btn-dark rounded-2 mb-0 btn-profile" data-username="{{ post.user.username }}">Profile</a>
+                        <a href="{% url 'chat_view' post.user.username %}" class="btn btn-dark rounded-2 mb-0">Chat</a>    
                     </div>
-
                 </div>
             </div>
         </div>

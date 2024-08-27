@@ -3,6 +3,7 @@ from . import views
 from django.contrib.auth import views as auth_views
 from .views import PasswordReset, PasswordResetConfirm, PasswordResetDone
 from .views import search_profiles
+from .views import send_notification
 
 
 urlpatterns = [
@@ -32,5 +33,14 @@ urlpatterns = [
     path('password_reset/done/',PasswordResetDone, name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirm, name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'), name='password_reset_complete'),
-       
+    path('send_notification/', send_notification, name='send_notification'),
+    path('send_notification/', send_notification, name='send_notification'),
+    # path('notifications/', get_notifications, name='get_notifications'),
+    # path('account-notification/', views.notifications_view, name='account-notification'),
+    # path('account-notification/', views.notifications_view, name='account-notification'),
+    # path('send_notification/', send_notification, name='send_notification'),
+
+
+
+   
 ]
